@@ -1,0 +1,29 @@
+{
+  "name": "cafe",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@jetbrains/kotlin-extensions": "^1.0.1-pre.61",
+    "@jetbrains/kotlin-react-redux": "^5.0.7-pre.61",
+    "@jetbrains/kotlin-redux": "^4.0.0-pre.61",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
+    "react-new-window": "^0.0.10",
+    "react-redux": "^6.0.0",
+    "react-textfit": "^1.1.0",
+    "redux": "^4.0.1",
+    "remote-redux-devtools": "^0.5.14"
+  },
+  "devDependencies": {
+    "react-scripts-kotlin": "3.0.3"
+  },
+  "scripts": {
+    "start": "react-scripts-kotlin start",
+    "libs": "cp -R ~/src/kotlin/lib/kotlinx.serialization/runtime/js/build/node_modules/kotlinx-serialization* ./node_modules",
+    "build": "react-scripts-kotlin build",
+    "eject": "react-scripts-kotlin eject",
+    "gen-idea-libs": "react-scripts-kotlin gen-idea-libs",
+    "get-types": "react-scripts-kotlin get-types --dest=src/types",
+    "postinstall": "npm run gen-idea-libs"
+  }
+}

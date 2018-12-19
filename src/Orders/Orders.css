@@ -1,0 +1,92 @@
+
+.fullheight, #root, html, body {
+    min-height: 100% !important;
+    height: 100%;
+}
+
+.order-display {
+    float: left;
+    width: 20%;
+    height: 20%;
+    padding: 4%;
+    text-align: center;
+    vertical-align: center;
+    font-family: Helvetica;
+}
+
+.order-list {
+    height: 100%;
+    display: inline-block;
+    width: 48%;
+    border-width: 10px;
+    border-style: solid;
+}
+
+.control-orders-list {
+    height: 80%;
+    width: 100%;
+    background-color: white;
+    z-index: 100;
+}
+
+.red-list {
+    border-color: red;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+}
+
+.blue-list {
+    border-color: blue;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+svg {
+    width: 100%;
+    height: 100%;
+}
+
+form.control {
+    height: 100%;
+}
+
+.control-container {
+    margin-top: 25px;
+    height: 16%;
+    vertical-align: center;
+    /*border-radius: 20px;*/
+}
+
+.control-container.Red {
+    background-color: red;
+}
+
+.control-container.Blue {
+    background-color: blue;
+}
+
+form.control input[type=number] {
+    margin-top: 20px;
+    height: 75px;
+    font-size: 70px;
+    width: 40%;
+    line-height: 75px;
+    vertical-align: center;
+}
+
+.flashit{
+    color: black;
+    -webkit-animation: flash linear 1s infinite;
+    animation: flash linear 1s infinite;
+}
+@-webkit-keyframes flash {
+    0% { opacity: 1; }
+    50% { opacity: .1; }
+    100% { opacity: 1; }
+}
+@keyframes flash {
+    0% { opacity: 1; }
+    50% { opacity: .1; }
+    100% { opacity: 1; }
+}
+
