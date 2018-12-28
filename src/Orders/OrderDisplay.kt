@@ -56,6 +56,8 @@ class OrderDisplay(props: OrderDisplayProps) : RComponent<OrderDisplayProps, Ord
         }
     }
 
+    private val formattedOrderNumber: String get() = props.orderNumber.toString().padStart( 3, '0')
+
     override fun RBuilder.render() {
         div {
             attrs {
@@ -67,7 +69,7 @@ class OrderDisplay(props: OrderDisplayProps) : RComponent<OrderDisplayProps, Ord
                 attrs {
                     mode = "single"
                 }
-                +props.orderNumber.toString()
+                +formattedOrderNumber
             }
         }
     }
