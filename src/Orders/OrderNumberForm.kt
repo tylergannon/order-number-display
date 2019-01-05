@@ -1,23 +1,17 @@
-package Orders
+package orders
 
-import Store.NewOrderAction
-import Store.Order
-import Store.OrderArea
-import Store.appStore
 import kotlinx.html.InputType
-import kotlinx.html.classes
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onSubmitFunction
 import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.ValidityState
-import react.*
+import react.RBuilder
+import react.RComponent
+import react.RProps
+import react.RState
 import react.dom.div
 import react.dom.form
 import react.dom.input
-import redux.RAction
-import textFit
-import kotlin.browser.window
-import kotlin.js.Date
+import store.OrderArea
 
 interface OrderNumberFormProps : RProps {
     var orderNumberEntry: Int?

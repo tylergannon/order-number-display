@@ -1,19 +1,19 @@
-package Orders
+package orders
 
-import Store.Order
-import react.*
-import react.dom.div
-import kotlin.browser.window
-import kotlin.js.Date
 import kotlinx.html.HTMLTag
 import kotlinx.html.classes
+import react.*
 import react.dom.RDOMBuilder
+import react.dom.div
 import react.dom.tag
+import store.Order
 import textFit
+import kotlin.browser.window
+import kotlin.js.Date
 
 interface OrderDisplayProps : RProps {
     var orderNumber: Int
-    var completedTime: Date
+    var completedTime: Double
 }
 
 interface OrderDisplayState : RState {
@@ -34,7 +34,7 @@ class EmptyOrder : RComponent<RProps, RState>() {
 
 class OrderDisplay(props: OrderDisplayProps) : RComponent<OrderDisplayProps, OrderDisplayState>(props) {
     override fun OrderDisplayState.init(props: OrderDisplayProps) {
-        age = ((Date.now() - props.completedTime.getTime())/1000).toInt()
+        age = ((Date.now() - props.completedTime) / 1000).toInt()
     }
 
     var timerID: Int? = null
@@ -52,7 +52,7 @@ class OrderDisplay(props: OrderDisplayProps) : RComponent<OrderDisplayProps, Ord
 
     override fun componentWillReceiveProps(nextProps: OrderDisplayProps) {
         setState {
-            age = ((Date.now() - props.completedTime.getTime())/1000).toInt()
+            age = ((Date.now() - props.completedTime) / 1000).toInt()
         }
     }
 

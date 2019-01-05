@@ -1,11 +1,13 @@
-package Orders
+package orders
 
-import Store.Order
-import Store.appStore
 import kotlinx.html.DIV
 import react.*
 import react.dom.RDOMBuilder
 import react.dom.div
+import store.AppState
+import store.Order
+import store.appStore
+
 
 interface CompletedOrdersDisplayState: RState {
     var redOrders: List<Order>
@@ -20,17 +22,16 @@ class CompletedOrdersDisplay : RComponent<RProps, CompletedOrdersDisplayState>()
 
     var unsubscribe: () -> Unit = {}
 
+    private fun mapStoreToState(state: AppState) = setState {
+        blueOrders = state.blueOrders
+        redOrders = state.redOrders
+    }
+
     override fun componentWillMount() {
-        setState {
-            redOrders = listOf()
-            blueOrders = listOf()
-        }
+        mapStoreToState(appStore.getState())
+
         unsubscribe = appStore.subscribe {
-            val currentState = appStore.getState()
-            setState {
-                redOrders = currentState.redOrders
-                blueOrders = currentState.blueOrders
-            }
+            mapStoreToState(appStore.getState())
         }
     }
 

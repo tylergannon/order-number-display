@@ -6,6 +6,8 @@
     "@jetbrains/kotlin-extensions": "^1.0.1-pre.61",
     "@jetbrains/kotlin-react-redux": "^5.0.7-pre.61",
     "@jetbrains/kotlin-redux": "^4.0.0-pre.61",
+    "cafeLib": "*",
+    "kotlinx-serialization-runtime-js": "*",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "react-new-window": "^0.0.10",

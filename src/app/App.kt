@@ -1,10 +1,10 @@
 package app
 
-import Orders.OrderNumberForm
-import Orders.completedOrdersDisplay
-import Store.*
+import orders.OrderNumberForm
+import orders.completedOrdersDisplay
 import react.*
 import react.dom.div
+import store.*
 import kotlin.js.Date
 
 interface InternalAppState : RState {
@@ -16,19 +16,16 @@ interface InternalAppState : RState {
 class App : RComponent<RProps, InternalAppState>() {
     var unsubscribe: () -> Unit = {}
 
+    private fun mapStoreToState(state: AppState) = setState {
+        currentColor = state.currentColor
+        orderNumberValid = state.orderNumberValid
+        orderNumberEntry = state.orderNumberEntry
+    }
+
     override fun componentWillMount() {
-        setState {
-            currentColor = OrderArea.initialState
-            orderNumberEntry = null
-            orderNumberValid = false
-        }
+        mapStoreToState(appStore.getState())
         unsubscribe = appStore.subscribe {
-            val appState = appStore.getState()
-            setState {
-                currentColor = appState.currentColor
-                orderNumberValid = appState.orderNumberValid
-                orderNumberEntry = appState.orderNumberEntry
-            }
+            mapStoreToState(appStore.getState())
         }
     }
 
@@ -42,9 +39,6 @@ class App : RComponent<RProps, InternalAppState>() {
             completedOrdersDisplay()
         }
 
-//        newWindow {
-//            completedOrdersDisplay()
-//        }
         child(OrderNumberForm::class) {
             attrs.orderNumberEntry = state.orderNumberEntry
             attrs.orderNumberValid = state.orderNumberValid
@@ -56,10 +50,9 @@ class App : RComponent<RProps, InternalAppState>() {
                 if (orderNumber == null)
                     appStore.dispatch(ChangeSidesAction())
                 else
-                    appStore.dispatch(NewOrderAction(orderNumber, Date(Date.now())))
+                    appStore.dispatch(NewOrderAction(orderNumber, Date.now()))
             }
         }
-
     }
 }
 
