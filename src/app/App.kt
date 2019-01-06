@@ -11,6 +11,8 @@ interface InternalAppState : RState {
     var orderNumberEntry: Int?
     var currentColor: OrderArea
     var orderNumberValid: Boolean
+    var redOrders: List<Order>
+    var blueOrders: List<Order>
 }
 
 class App : RComponent<RProps, InternalAppState>() {
@@ -20,6 +22,8 @@ class App : RComponent<RProps, InternalAppState>() {
         currentColor = state.currentColor
         orderNumberValid = state.orderNumberValid
         orderNumberEntry = state.orderNumberEntry
+        redOrders = state.redOrders
+        blueOrders = state.blueOrders
     }
 
     override fun componentWillMount() {
@@ -36,7 +40,7 @@ class App : RComponent<RProps, InternalAppState>() {
 
     override fun RBuilder.render() {
         div("control-orders-list") {
-            completedOrdersDisplay()
+            completedOrdersDisplay(state.redOrders, state.blueOrders)
         }
 
         child(OrderNumberForm::class) {
@@ -52,6 +56,7 @@ class App : RComponent<RProps, InternalAppState>() {
                 else
                     appStore.dispatch(NewOrderAction(orderNumber, Date.now()))
             }
+            attrs.clearDisplay = { -> appStore.dispatch(ClearStateAction())}
         }
     }
 }

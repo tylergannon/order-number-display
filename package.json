@@ -2,22 +2,22 @@
   "name": "cafe",
   "version": "0.1.0",
   "private": true,
+  "homepage": "file:///Users/tyler/src/kotlin/cafe/build",
   "dependencies": {
     "@jetbrains/kotlin-extensions": "^1.0.1-pre.61",
     "@jetbrains/kotlin-react-redux": "^5.0.7-pre.61",
     "@jetbrains/kotlin-redux": "^4.0.0-pre.61",
     "cafeLib": "*",
-    "kotlinx-serialization-runtime-js": "*",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "react-new-window": "^0.0.10",
     "react-redux": "^6.0.0",
     "react-textfit": "^1.1.0",
-    "redux": "^4.0.1",
-    "remote-redux-devtools": "^0.5.14"
+    "redux": "^4.0.1"
   },
   "devDependencies": {
-    "react-scripts-kotlin": "3.0.3"
+    "react-scripts-kotlin": "3.0.3",
+    "remote-redux-devtools": "^0.5.14"
   },
   "scripts": {
     "start": "react-scripts-kotlin start",

@@ -4,46 +4,22 @@ import kotlinx.html.DIV
 import react.*
 import react.dom.RDOMBuilder
 import react.dom.div
-import store.AppState
 import store.Order
 import store.appStore
 
-
-interface CompletedOrdersDisplayState: RState {
+interface CompletedOrdersDisplayProps: RProps {
     var redOrders: List<Order>
     var blueOrders: List<Order>
 }
 
-class CompletedOrdersDisplay : RComponent<RProps, CompletedOrdersDisplayState>() {
-    override fun CompletedOrdersDisplayState.init(props: RProps) {
-        redOrders = listOf()
-        blueOrders = listOf()
-    }
+class CompletedOrdersDisplay : RComponent<CompletedOrdersDisplayProps, RState>() {
 
     var unsubscribe: () -> Unit = {}
 
-    private fun mapStoreToState(state: AppState) = setState {
-        blueOrders = state.blueOrders
-        redOrders = state.redOrders
-    }
-
-    override fun componentWillMount() {
-        mapStoreToState(appStore.getState())
-
-        unsubscribe = appStore.subscribe {
-            mapStoreToState(appStore.getState())
-        }
-    }
-
-    override fun componentWillUnmount() {
-        unsubscribe()
-        unsubscribe = {}
-    }
-
     override fun RBuilder.render() {
         div("completed-orders-display fullheight") {
-            div("order-list red-list", renderOrders(state.redOrders))
-            div("order-list blue-list", renderOrders(state.blueOrders))
+            div("order-list red-list", renderOrders(props.redOrders))
+            div("order-list blue-list", renderOrders(props.blueOrders))
         }
     }
 
@@ -55,4 +31,7 @@ class CompletedOrdersDisplay : RComponent<RProps, CompletedOrdersDisplayState>()
     }
 }
 
-fun RBuilder.completedOrdersDisplay() = child(CompletedOrdersDisplay::class) {}
+fun RBuilder.completedOrdersDisplay(redOrders: List<Order>, blueOrders: List<Order>) = child(CompletedOrdersDisplay::class) {
+    attrs.blueOrders = blueOrders
+    attrs.redOrders = redOrders
+}

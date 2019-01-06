@@ -79,5 +79,5 @@ class OrderDisplay(props: OrderDisplayProps) : RComponent<OrderDisplayProps, Ord
 fun RBuilder.orderDisplay(order: Order) = child(OrderDisplay::class) {
     attrs.orderNumber = order.orderNumber
     attrs.completedTime = order.completedTime
-    attrs.key = order.orderNumber.toString()
+    attrs.key = order.completedTime.toString()
 }
