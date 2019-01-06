@@ -4,6 +4,10 @@ import kotlinx.html.DIV
 import react.*
 import react.dom.RDOMBuilder
 import react.dom.div
+import react.redux.rConnect
+import redux.RAction
+import redux.WrapperAction
+import store.AppState
 import store.Order
 import store.appStore
 
@@ -13,8 +17,6 @@ interface CompletedOrdersDisplayProps: RProps {
 }
 
 class CompletedOrdersDisplay : RComponent<CompletedOrdersDisplayProps, RState>() {
-
-    var unsubscribe: () -> Unit = {}
 
     override fun RBuilder.render() {
         div("completed-orders-display fullheight") {
@@ -31,7 +33,9 @@ class CompletedOrdersDisplay : RComponent<CompletedOrdersDisplayProps, RState>()
     }
 }
 
-fun RBuilder.completedOrdersDisplay(redOrders: List<Order>, blueOrders: List<Order>) = child(CompletedOrdersDisplay::class) {
-    attrs.blueOrders = blueOrders
-    attrs.redOrders = redOrders
-}
+val connectedCompletedOrdersDisplay: RClass<RProps> =
+        rConnect<AppState, RAction, WrapperAction, RProps,
+                    CompletedOrdersDisplayProps, RProps, CompletedOrdersDisplayProps>({state, _ ->
+            redOrders = state.redOrders
+            blueOrders = state.blueOrders
+        }, {_, _ ->})(CompletedOrdersDisplay::class.js as RClass<CompletedOrdersDisplayProps>)
