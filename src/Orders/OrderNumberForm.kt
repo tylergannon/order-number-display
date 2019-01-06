@@ -21,8 +21,9 @@ internal interface OrderNumberFormProps : RProps {
     var orderNumberValid: Boolean
     var currentColor: OrderArea
     var orderNumberEntryChanged: (orderNumber: Int?) -> Unit
-    var addOrder: (orderNumber: Int?) -> Unit
+    var addOrder: (orderNumber: Int) -> Unit
     var clearDisplay: () -> Unit
+    var changeSides: () -> Unit
 }
 
 internal class OrderNumberForm(props: OrderNumberFormProps) : RComponent<OrderNumberFormProps, RState>(props) {
@@ -31,7 +32,9 @@ internal class OrderNumberForm(props: OrderNumberFormProps) : RComponent<OrderNu
             form(action = null, classes = "control") {
                 attrs {
                     onSubmitFunction = {
-                        props.addOrder(props.orderNumberEntry)
+                        val orderNumberEntry = props.orderNumberEntry
+                        if (orderNumberEntry == null) props.changeSides()
+                        else props.addOrder(orderNumberEntry)
                         it.preventDefault()
                     }
                 }
@@ -56,13 +59,17 @@ internal class OrderNumberForm(props: OrderNumberFormProps) : RComponent<OrderNu
                 button {
                     attrs.onClickFunction = {e ->
                         e.preventDefault()
-                        console.log(e)
                         props.clearDisplay()
                     }
-
-                    attrs.name = "Clear Display"
-                    attrs.value = "Clear Display"
                     +"Clear Display"
+                }
+
+                button {
+                    attrs.onClickFunction = {e ->
+                        e.preventDefault()
+                        props.changeSides()
+                    }
+                    +"Change Sides"
                 }
             }
         }
@@ -77,8 +84,9 @@ internal interface StateProps: RProps {
 
 internal interface DispatchProps: RProps {
     var orderNumberEntryChanged: (orderNumber: Int?) -> Unit
-    var addOrder: (orderNumber: Int?) -> Unit
+    var addOrder: (orderNumber: Int) -> Unit
     var clearDisplay: () -> Unit
+    var changeSides: () -> Unit
 }
 
 private val mapStateToProps: StateProps.(AppState, RProps) -> Unit = {state, _ ->
@@ -89,11 +97,9 @@ private val mapStateToProps: StateProps.(AppState, RProps) -> Unit = {state, _ -
 
 private val mapDispatchToProps: DispatchProps.((RAction) -> WrapperAction, RProps) -> Unit = {dispatch, _ ->
     orderNumberEntryChanged = { orderNumber -> dispatch(OrderNumberEntryChangeAction(orderNumber)) }
-    addOrder = { orderNumber ->
-        if (orderNumber == null) dispatch(ChangeSidesAction())
-        else dispatch(NewOrderAction(orderNumber, Date.now()))
-    }
+    addOrder = { orderNumber -> dispatch(NewOrderAction(orderNumber, Date.now())) }
     clearDisplay = { dispatch(ClearStateAction()) }
+    changeSides = { dispatch(ChangeSidesAction()) }
 }
 
 val connectedOrderNumberForm: RClass<RProps> = rConnect<AppState, RAction, WrapperAction, RProps,
