@@ -6,10 +6,7 @@ import kotlinx.html.js.onClickFunction
 import kotlinx.html.js.onSubmitFunction
 import org.w3c.dom.HTMLInputElement
 import react.*
-import react.dom.button
-import react.dom.div
-import react.dom.form
-import react.dom.input
+import react.dom.*
 import react.redux.rConnect
 import redux.RAction
 import redux.WrapperAction
@@ -39,37 +36,46 @@ internal class OrderNumberForm(props: OrderNumberFormProps) : RComponent<OrderNu
                     }
                 }
 
-                input(type = InputType.number, name = "order_number", classes = "number-input") {
-                    attrs {
-                        value = props.orderNumberEntry.toString()
-                        onChangeFunction = {
-                            val inputElement = it.target as HTMLInputElement
-                            props.orderNumberEntryChanged(inputElement.valueAsNumber.toInt())
+                span {
+                    input(type = InputType.number, name = "order_number", classes = "number-input") {
+                        attrs {
+                            value = props.orderNumberEntry.toString()
+                            onChangeFunction = {
+                                val inputElement = it.target as HTMLInputElement
+                                props.orderNumberEntryChanged(inputElement.valueAsNumber.toInt())
+                            }
                         }
                     }
                 }
 
-                input(type = InputType.submit, name = "submit_number") {
-                    attrs {
-                        value = "Submit"
-                        disabled = !props.orderNumberValid
+                span {
+                    div {
+                        input(type = InputType.submit, name = "submit_number") {
+                            attrs {
+                                value = "Submit"
+                                disabled = !props.orderNumberValid
+                            }
+                        }
                     }
-                }
+                    div {
+                        button {
+                            attrs.onClickFunction = {e ->
+                                e.preventDefault()
+                                props.changeSides()
+                            }
+                            +"Change Sides"
+                        }
+                    }
 
-                button {
-                    attrs.onClickFunction = {e ->
-                        e.preventDefault()
-                        props.clearDisplay()
+                    div {
+                        button {
+                            attrs.onClickFunction = {e ->
+                                e.preventDefault()
+                                props.clearDisplay()
+                            }
+                            +"Clear Display"
+                        }
                     }
-                    +"Clear Display"
-                }
-
-                button {
-                    attrs.onClickFunction = {e ->
-                        e.preventDefault()
-                        props.changeSides()
-                    }
-                    +"Change Sides"
                 }
             }
         }

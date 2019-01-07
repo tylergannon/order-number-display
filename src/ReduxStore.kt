@@ -1,82 +1,150 @@
-//package Store
-//
-//import kotlinx.serialization.SerialId
-//import react.RState
-//import redux.*
-//import kotlin.browser.window
-//import kotlinx.serialization.Serializable
-//import kotlin.browser.localStorage
-//import kotlinx.serialization.json.JSON
-//
-//import kotlin.js.Date
-//
-//private val ORDERS_IN_QUEUE = 20
-//
-//enum class OrderArea(val rgb: String) {
-//    Red("FF0000"), Blue("0000FF");
-//
-//    fun next() = if (this == Red) Blue else Red
-//
-//    companion object {
-//        val initialState: OrderArea = Red
-//    }
-//}
-//
-//data class Order(val orderNumber: Int, val completedTime: Date)
-//
-//@Serializable
-//data class AppState (@SerialId(1) val redOrders: List<Order> = listOf(),
-//                     @SerialId(2) val blueOrders: List<Order> = listOf(),
-//                     @SerialId(3) val currentColor: OrderArea = OrderArea.initialState,
-//                     @SerialId(4) val orderNumberEntry: Int? = null,
-//                     @SerialId(5) val orderNumberValid: Boolean = false) : RState
-//
-//
-///******************************************************************************
-// * ACTIONS
-// *****************************************************************************/
-//
-//class NewOrderAction(val orderNumber: Int, val orderDate: Date): RAction
-//class OrderNumberEntryChangeAction(val orderNumber: Int?): RAction
-//class ChangeSidesAction : RAction
-//
-///******************************************************************************
-// * ACTIONS
-// *****************************************************************************/
-//
-//
-//
-//private fun addOrderToList(order: Order, list: List<Order>) =
-//        list.plus(order).run { dropWhile { size >= ORDERS_IN_QUEUE } }
-//
-//private fun orderNumberValidator(number: Int?, appState: AppState) = (number ?: 0).let { it < 1000 }
-//
-//private fun storeState(state: AppState) = localStorage.setItem("state", JSON.stringify(AppState.serializer(), appStore.getState()))
-//
-//
-//fun appReducer(state: AppState, action: RAction) = when(action) {
-//
-//    is NewOrderAction -> {
-//
-//        val newOrder = Order(action.orderNumber, action.orderDate)
-//
-//        if (state.currentColor == OrderArea.Red)
-//            state.copy(redOrders = addOrderToList(newOrder, state.redOrders),
-//                    currentColor = OrderArea.Blue,
-//                    orderNumberEntry = null)
-//        else
-//            state.copy(blueOrders = addOrderToList(newOrder, state.blueOrders),
-//                    currentColor = OrderArea.Red,
-//                    orderNumberEntry = null)
-//    }
-//    is OrderNumberEntryChangeAction -> {
-//        state.copy(orderNumberEntry = action.orderNumber, orderNumberValid = orderNumberValidator(action.orderNumber, state))
-//    }
-//    else -> state
-//}
-//
-//
-//
-//val appStore = createStore<AppState, RAction, WrapperAction>(::appReducer, AppState(),
-//        window.asDynamic().__REDUX_DEVTOOLS_EXTENSION_COMPOSE__(kotlinext.js.js {  })(rEnhancer<AppState>()))
-//
+
+package store
+
+import kotlinext.js.jsObject
+import react.RState
+import redux.*
+import kotlin.browser.localStorage
+import kotlin.js.Date
+
+private val ORDERS_IN_QUEUE = 16
+
+enum class OrderArea(val rgb: String) {
+    Red("FF0000"), Blue("0000FF");
+
+    fun next() = if (this == Red) Blue else Red
+
+    companion object {
+        val initialState: OrderArea = Red
+    }
+}
+
+interface OrderJSON {
+    var orderNumber: Int
+    var completedTime: Double
+}
+
+interface AppStateJSON {
+    var redOrders: Array<OrderJSON>
+    var blueOrders: Array<OrderJSON>
+    var currentColor: String
+    var orderNumberEntry: Int?
+    var orderNumberValid: Boolean
+}
+
+data class Order(val orderNumber: Int, val completedTime: Double)
+
+fun List<Order>.plusBounded(order: Order, bound: Int = ORDERS_IN_QUEUE) = plus(order).run {
+    if (size > bound) {
+        console.log(this, size, bound)
+        drop(size - bound)
+    } else this
+}
+
+data class AppState (val redOrders: List<Order> = listOf(),
+                     val blueOrders: List<Order> = listOf(),
+                     val currentColor: OrderArea = OrderArea.initialState,
+                     val orderNumberEntry: Int? = null,
+                     val orderNumberValid: Boolean = false) : RState {
+
+    fun plusOrder(order: Order) : AppState = copy(
+            redOrders = if (currentColor == OrderArea.Red) redOrders.plusBounded(order) else redOrders,
+            blueOrders = if (currentColor == OrderArea.Blue) blueOrders.plusBounded(order) else blueOrders,
+            currentColor = currentColor.next(),
+            orderNumberEntry = null
+    )
+
+    companion object {
+        val initialValue = AppState()
+        fun fromJSON(state: AppStateJSON) = AppState(
+                redOrders = state.redOrders.map { Order(it.orderNumber, it.completedTime) },
+                blueOrders = state.blueOrders.map { Order(it.orderNumber, it.completedTime) },
+                currentColor = OrderArea.valueOf(state.currentColor),
+                orderNumberEntry = state.orderNumberEntry,
+                orderNumberValid = state.orderNumberValid
+        )
+        fun deserialize(json: String) = fromJSON(JSON.parse(json))
+    }
+
+    fun serialize() = JSON.stringify(toJSON())
+
+    fun toJSON(): AppStateJSON {
+        val me = this
+        val poop = { it: Order ->
+            jsObject<OrderJSON> {
+                orderNumber = it.orderNumber
+                completedTime = it.completedTime
+            }
+        }
+        return jsObject {
+            redOrders = me.redOrders.map(poop).toTypedArray()
+            blueOrders = me.blueOrders.map(poop).toTypedArray()
+            currentColor = me.currentColor.name
+            orderNumberEntry = me.orderNumberEntry
+            orderNumberValid = me.orderNumberValid
+        }
+    }
+
+}
+
+
+/******************************************************************************
+ * ACTIONS
+ *****************************************************************************/
+
+class NewOrderAction(val orderNumber: Int, val orderDate: Double): RAction
+class OrderNumberEntryChangeAction(val orderNumber: Int?): RAction
+class ChangeSidesAction : RAction
+class ClearStateAction: RAction
+
+/**----------------------------------------------------------------------------
+END ACTIONS
+----------------------------------------------------------------------------*/
+
+private fun orderNumberValidator(number: Int?, appState: AppState) = (number ?: 0).let { it < 1000 }
+
+private fun loadState(state: AppState = AppState.initialValue) =
+        localStorage.getItem("state")?.let {
+            AppState.deserialize(it)
+        } ?: state
+
+/******************************************************************************
+ * REDUCER
+ *****************************************************************************/
+
+val appReducer: Reducer<AppState, RAction> = fun(state: AppState, action: RAction): AppState {
+
+    return when(action) {
+        is ClearStateAction     ->  AppState.initialValue
+        is ChangeSidesAction    ->  state.copy(currentColor = state.currentColor.next(), orderNumberEntry = null)
+        is NewOrderAction       ->
+            state.plusOrder(Order(action.orderNumber, action.orderDate))
+        is OrderNumberEntryChangeAction ->
+            state.copy( orderNumberEntry = action.orderNumber,
+                    orderNumberValid = orderNumberValidator(action.orderNumber, state))
+
+        else -> state
+    }
+}
+
+/**----------------------------------------------------------------------------
+END REDUCER
+----------------------------------------------------------------------------*/
+
+
+typealias AppMiddleware = Middleware<AppState, RAction, WrapperAction, RAction, WrapperAction>
+
+val storeStateMiddleware: AppMiddleware = { store -> { next -> { action ->
+    next(action).apply {
+        localStorage.setItem("state", store.getState().serialize())
+    }
+} } }
+
+val appStore = createStore(
+        appReducer,
+        loadState(),
+        compose(applyMiddleware(storeStateMiddleware), rEnhancer())
+)
+
+//    window.asDynamic().__REDUX_DEVTOOLS_EXTENSION_COMPOSE__(kotlinext.js.js { })(
+//    )

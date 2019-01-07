@@ -69,9 +69,8 @@ form.control input[type=number] {
     margin-top: 20px;
     height: 75px;
     font-size: 70px;
-    width: 40%;
     line-height: 75px;
-    vertical-align: center;
+    vertical-align: middle;
 }
 
 .flashit{
