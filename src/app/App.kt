@@ -1,6 +1,7 @@
 package app
 
 import kotlinx.css.pct
+import orders.DisplayOrder
 import orders.connectedCompletedOrdersDisplay
 import orders.connectedOrderNumberForm
 import orders.connectedSecondaryDisplay
@@ -24,7 +25,9 @@ class App : RComponent<RProps, InternalAppState>() {
     override fun RBuilder.render() {
         styledDiv {
             css.height = 85.pct
-            connectedCompletedOrdersDisplay {}
+            connectedCompletedOrdersDisplay {
+                attrs.displayOrder = DisplayOrder.BR
+            }
         }
         styledDiv {
             css.height = 15.pct

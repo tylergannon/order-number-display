@@ -1,5 +1,6 @@
 package orders
 
+import grid.column
 import grid.columns
 import grid.container
 import grid.icon
@@ -12,7 +13,6 @@ import kotlinx.html.DIV
 import kotlinx.html.classes
 import react.*
 import react.dom.RDOMBuilder
-import react.dom.div
 import react.redux.rConnect
 import redux.RAction
 import redux.WrapperAction
@@ -24,9 +24,25 @@ import styled.css
 import styled.styledDiv
 import textFit
 
-interface CompletedOrdersDisplayProps: RProps {
+enum class DisplayOrder(val left: OrderArea, val right: OrderArea) {
+    RB(OrderArea.Red, OrderArea.Blue),
+    BR(OrderArea.Blue, OrderArea.Red)
+}
+
+interface CompletedOrdersDisplayProps : CompletedOrdersStateProps, WrappedCompletedOrdersDisplayProps
+
+interface CompletedOrdersStateProps : RProps {
     var redOrders: List<Order>
     var blueOrders: List<Order>
+}
+
+interface WrappedCompletedOrdersDisplayProps : RProps {
+    var displayOrder: DisplayOrder
+}
+
+interface CompletedOrdersDisplayState : RState {
+    var leftOrders: List<Order>
+    var rightOrders: List<Order>
 }
 
 object OrderDisplayStyle : StyleSheet("OrderDisplay") {
@@ -38,22 +54,34 @@ object OrderDisplayStyle : StyleSheet("OrderDisplay") {
     }
 }
 
-class CompletedOrdersDisplay : RComponent<CompletedOrdersDisplayProps, RState>() {
+class CompletedOrdersDisplay : RComponent<CompletedOrdersDisplayProps, CompletedOrdersDisplayState>() {
     private val mainHeight: Int = 80
+
+    override fun componentWillMount() {
+        setState {
+            if (props.displayOrder == DisplayOrder.BR) {
+                leftOrders = props.blueOrders
+                rightOrders = props.redOrders
+            } else {
+                leftOrders = props.redOrders
+                rightOrders = props.blueOrders
+            }
+        }
+    }
 
     override fun RBuilder.render() {
         container {
             css.height = 100.pct
             columns {
                 css.height = (100 - mainHeight).pct
-                div("${OrderArea.Red.bg} col-6") {
+                column(6, setOf(props.displayOrder.left.bg)) {
                     textFit {
                         attrs.mode = "single"
                         icon("icon-arrow-left")
                         +"Left Side"
                     }
                 }
-                div("${OrderArea.Blue.bg} col-6") {
+                column(6, setOf(props.displayOrder.right.bg)) {
                     textFit {
                         attrs.mode = "single"
                         +"Right Side"
@@ -63,16 +91,19 @@ class CompletedOrdersDisplay : RComponent<CompletedOrdersDisplayProps, RState>()
             }
             columns {
                 css.height = mainHeight.pct
-                styledDiv {
-                    attrs.classes = setOf("red-list", "col-6", OrderArea.Red.fg)
-                    css.height = 100.pct
-                    css.border(16.px, BorderStyle.solid, Color.currentColor)
-                    renderOrders(props.redOrders)
+                column(6, setOf(props.displayOrder.left.fg)) {
+                    css {
+                        height = 100.pct
+                        border(16.px, BorderStyle.solid, Color.currentColor)
+                    }
+                    renderOrders(state.leftOrders)
                 }
-                styledDiv {
-                    attrs.classes = setOf("blue-list", "col-6", OrderArea.Blue.fg)
-                    css.border(16.px, BorderStyle.solid, Color.currentColor)
-                    renderOrders(props.blueOrders)
+                column(6, setOf(props.displayOrder.right.fg)) {
+                    css {
+                        height = 100.pct
+                        border(16.px, BorderStyle.solid, Color.currentColor)
+                    }
+                    renderOrders(state.rightOrders)
                 }
             }
         }
@@ -92,9 +123,9 @@ class CompletedOrdersDisplay : RComponent<CompletedOrdersDisplayProps, RState>()
     }
 }
 
-val connectedCompletedOrdersDisplay: RClass<RProps> =
-        rConnect<AppState, RAction, WrapperAction, RProps,
-                    CompletedOrdersDisplayProps, RProps, CompletedOrdersDisplayProps>({state, _ ->
+val connectedCompletedOrdersDisplay: RClass<WrappedCompletedOrdersDisplayProps> =
+        rConnect<AppState, RAction, WrapperAction, WrappedCompletedOrdersDisplayProps,
+                CompletedOrdersStateProps, RProps, CompletedOrdersDisplayProps>({ state, _ ->
             redOrders = state.redOrders
             blueOrders = state.blueOrders
         }, {_, _ ->})(CompletedOrdersDisplay::class.js as RClass<CompletedOrdersDisplayProps>)

@@ -15,7 +15,6 @@ import kotlinx.html.classes
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
 import kotlinx.html.js.onSubmitFunction
-import newWindow
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLTextAreaElement
 import org.w3c.dom.events.Event
@@ -112,11 +111,7 @@ internal class OrderNumberForm(props: OrderNumberFormProps) : RComponent<OrderNu
         styledButton {
             attrs {
                 classes = setOf("m-1")
-                onClickFunction = eventHandler {
-                    newWindow {
-                        connectedCompletedOrdersDisplay {}
-                    }
-                }
+                onClickFunction = eventHandler(props.openDisplayWindow)
             }
             css {
                 borderWidth = 5.px
@@ -155,20 +150,16 @@ internal class OrderNumberForm(props: OrderNumberFormProps) : RComponent<OrderNu
                 columns {
                     attrs.classes = setOf("py-2", "columns", props.currentColor.bg)
                     css.height = 100.pct
-                    column(1) {
-                        styledButton {
-                            attrs.onClickFunction = eventHandler(props.openDisplayWindow)
-                            icon2x("icon-share")
-                        }
-                    }
+                    column(1) { }
                     column(3) { numberInput() }
-                    column(2, setOf("py-2")) {
+                    column(3, setOf("py-2")) {
                         css.verticalAlign = VerticalAlign.middle
                         submitForm()
                         switchButton()
                         clearButton()
+                        openNewWindowButton()
                     }
-                    column(6) {
+                    column(5) {
                         textArea {
                             attrs.value = props.message
                             attrs.onChangeFunction = { event ->

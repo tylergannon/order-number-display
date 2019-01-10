@@ -2,6 +2,7 @@
 package store
 
 import kotlinext.js.jsObject
+import org.w3c.dom.events.Event
 import react.RState
 import redux.*
 import kotlin.browser.localStorage
@@ -150,11 +151,22 @@ val storeStateMiddleware: AppMiddleware = { store -> { next -> { action ->
     }
 } } }
 
+val resizeWindowMiddleware: AppMiddleware = { store ->
+    { next ->
+        { action ->
+            next(action).apply {
+                if (action is ChangeMessageAction || action is NewOrderAction)
+                    window.dispatchEvent(Event("resize"))
+            }
+        }
+    }
+}
+
 val appStore = createStore<AppState, RAction, WrapperAction>(
         appReducer,
         loadState(),
         window.asDynamic().__REDUX_DEVTOOLS_EXTENSION_COMPOSE__(kotlinext.js.js { trace = true })(
-                compose(applyMiddleware(storeStateMiddleware), rEnhancer())
+                compose(applyMiddleware(storeStateMiddleware, resizeWindowMiddleware), rEnhancer())
         )
 )
 

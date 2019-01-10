@@ -56,9 +56,14 @@ class OrderDisplay(props: OrderDisplayProps) : RComponent<OrderDisplayProps, Ord
                 if (state.age <= 5) { classes += "flashit" }
             }
 
+//            fitText(formattedOrderNumber, 0.19f)
+
             textFit {
                 attrs {
                     mode = "single"
+                    onReady = {
+                        console.log(props.orderNumber, "OrderFit")
+                    }
                 }
                 +formattedOrderNumber
             }
