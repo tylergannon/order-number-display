@@ -16,5 +16,7 @@
     <orderEntry type="library" name="kotlin-redux" level="project" />
     <orderEntry type="library" name="kotlinx-serialization-runtime-js" level="project" />
     <orderEntry type="library" name="cafeLib" level="project" />
+    <orderEntry type="library" name="kotlin-css-js" level="project" />
+    <orderEntry type="library" name="kotlin-styled" level="project" />
   </component>
 </module>

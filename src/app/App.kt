@@ -1,11 +1,15 @@
 package app
 
-import orders.OrderNumberForm
+import kotlinx.css.pct
 import orders.connectedCompletedOrdersDisplay
 import orders.connectedOrderNumberForm
-import react.*
-import react.dom.div
-import store.*
+import react.RBuilder
+import react.RComponent
+import react.RProps
+import react.RState
+import store.Order
+import store.OrderArea
+import styled.styledDiv
 
 interface InternalAppState : RState {
     var orderNumberEntry: Int?
@@ -17,10 +21,14 @@ interface InternalAppState : RState {
 
 class App : RComponent<RProps, InternalAppState>() {
     override fun RBuilder.render() {
-        div("control-orders-list") {
+        styledDiv {
+            css.height = 85.pct
             connectedCompletedOrdersDisplay {}
         }
-        connectedOrderNumberForm {}
+        styledDiv {
+            css.height = 15.pct
+            connectedOrderNumberForm {}
+        }
     }
 }
 
