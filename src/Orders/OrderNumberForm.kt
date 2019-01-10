@@ -4,11 +4,8 @@ import grid.column
 import grid.columns
 import grid.container
 import grid.icon2x
-import kotlinx.css.VerticalAlign
-import kotlinx.css.pct
+import kotlinx.css.*
 import kotlinx.css.properties.LineHeight
-import kotlinx.css.pt
-import kotlinx.css.px
 import kotlinx.html.ButtonType
 import kotlinx.html.InputType
 import kotlinx.html.classes
@@ -19,16 +16,13 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLTextAreaElement
 import org.w3c.dom.events.Event
 import react.*
-import react.dom.textArea
 import react.dom.value
 import react.redux.rConnect
 import redux.RAction
 import redux.WrapperAction
 import store.*
-import styled.css
-import styled.styledButton
-import styled.styledForm
-import styled.styledInput
+import styled.*
+import textFit
 import kotlin.js.Date
 
 internal interface OrderNumberFormProps : RProps {
@@ -70,7 +64,7 @@ internal class OrderNumberForm(props: OrderNumberFormProps) : RComponent<OrderNu
             css {
                 height = 75.px
                 fontSize = 50.pt
-                width = 100.pct
+                width = 140.px
                 lineHeight = LineHeight("75px")
                 verticalAlign = VerticalAlign.middle
             }
@@ -150,20 +144,61 @@ internal class OrderNumberForm(props: OrderNumberFormProps) : RComponent<OrderNu
                 columns {
                     attrs.classes = setOf("py-2", "columns", props.currentColor.bg)
                     css.height = 100.pct
-                    column(1) { }
-                    column(3) { numberInput() }
-                    column(3, setOf("py-2")) {
-                        css.verticalAlign = VerticalAlign.middle
-                        submitForm()
-                        switchButton()
-                        clearButton()
-                        openNewWindowButton()
+
+                    column(2, setOf("text-dark")) {
+                        css.fontWeight = FontWeight.bolder
+                        if (props.currentColor == OrderArea.Blue) {
+                            css.lineHeight = LineHeight("0.5")
+                            textFit {
+                                attrs.mode = "single"
+                                attrs.max = 200
+                                +"⇚"
+                            }
+                        }
                     }
-                    column(5) {
-                        textArea {
-                            attrs.value = props.message
-                            attrs.onChangeFunction = { event ->
-                                event.target.let { it as HTMLTextAreaElement }.value.run { props.changeMessage(this) }
+                    column(8) {
+                        styledDiv {
+                            numberInput()
+                            styledTextArea {
+                                attrs.value = props.message
+                                attrs.onChangeFunction = { event ->
+                                    event.target.let { it as HTMLTextAreaElement }.value.run { props.changeMessage(this) }
+                                }
+                                css {
+                                    display = Display.inlineBlock
+                                    verticalAlign = VerticalAlign.bottom
+                                    marginLeft = 20.px
+                                }
+                                css.height = 75.px
+                            }
+                        }
+                        styledDiv {
+                            submitForm()
+                            switchButton()
+                            clearButton()
+                            openNewWindowButton()
+                        }
+//                        container {
+//                            columns {
+//                                column(6) {
+//                                    css.paddingTop = 20.px
+//                                }
+//                                column(6) {
+////                                    css.verticalAlign = VerticalAlign.middle
+////                                    css.lineHeight = LineHeight.initial
+//                                    css.paddingTop = 20.px
+//                                }
+//                            }
+//                        }
+                    }
+                    column(2, setOf("text-dark")) {
+                        css.fontWeight = FontWeight.bolder
+                        if (props.currentColor == OrderArea.Red) {
+                            css.lineHeight = LineHeight("0.5")
+                            textFit {
+                                attrs.mode = "single"
+                                attrs.max = 200
+                                +"⇛"
                             }
                         }
                     }

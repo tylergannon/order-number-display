@@ -24,13 +24,13 @@ interface InternalAppState : RState {
 class App : RComponent<RProps, InternalAppState>() {
     override fun RBuilder.render() {
         styledDiv {
-            css.height = 85.pct
+            css.height = 80.pct
             connectedCompletedOrdersDisplay {
                 attrs.displayOrder = DisplayOrder.BR
             }
         }
         styledDiv {
-            css.height = 15.pct
+            css.height = 20.pct
             connectedOrderNumberForm {}
         }
         connectedSecondaryDisplay {}
