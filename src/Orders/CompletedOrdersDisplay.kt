@@ -27,7 +27,6 @@ import textFit
 interface CompletedOrdersDisplayProps: RProps {
     var redOrders: List<Order>
     var blueOrders: List<Order>
-    var message: String
 }
 
 object OrderDisplayStyle : StyleSheet("OrderDisplay") {
@@ -76,17 +75,6 @@ class CompletedOrdersDisplay : RComponent<CompletedOrdersDisplayProps, RState>()
                     renderOrders(props.blueOrders)
                 }
             }
-//            columns {
-//                styledDiv {
-//                    attrs.classes = setOf("col-12")
-//                    if (props.message.isNotEmpty())
-//                        css.height = 60.px
-//                    textFit {
-//                        attrs.mode = "single"
-//                        +props.message
-//                    }
-//                }
-//            }
         }
     }
 
@@ -109,5 +97,4 @@ val connectedCompletedOrdersDisplay: RClass<RProps> =
                     CompletedOrdersDisplayProps, RProps, CompletedOrdersDisplayProps>({state, _ ->
             redOrders = state.redOrders
             blueOrders = state.blueOrders
-            message = state.message
         }, {_, _ ->})(CompletedOrdersDisplay::class.js as RClass<CompletedOrdersDisplayProps>)

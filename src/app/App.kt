@@ -3,6 +3,7 @@ package app
 import kotlinx.css.pct
 import orders.connectedCompletedOrdersDisplay
 import orders.connectedOrderNumberForm
+import orders.connectedSecondaryDisplay
 import react.RBuilder
 import react.RComponent
 import react.RProps
@@ -29,6 +30,7 @@ class App : RComponent<RProps, InternalAppState>() {
             css.height = 15.pct
             connectedOrderNumberForm {}
         }
+        connectedSecondaryDisplay {}
     }
 }
 

@@ -101,8 +101,9 @@ class OrderNumberEntryChangeAction(val orderNumber: Int?): RAction
 class ChangeSidesAction : RAction
 class ClearStateAction: RAction
 class ChangeMessageAction(val message: String) : RAction
-class OpenDisplayWindow : RAction
-class CloseDisplayWindow : RAction
+class OpenDisplayWindowAction : RAction
+class DisplayWindowBlockedAction : RAction
+class CloseDisplayWindowAction : RAction
 
 /**----------------------------------------------------------------------------
 END ACTIONS
@@ -124,12 +125,14 @@ val appReducer: Reducer<AppState, RAction> = fun(state: AppState, action: RActio
         is ClearStateAction     ->  AppState.initialValue
         is ChangeSidesAction    ->  state.copy(currentColor = state.currentColor.next(), orderNumberEntry = null)
         is ChangeMessageAction -> state.copy(message = action.message)
+        is OpenDisplayWindowAction -> state.copy(displayWindowOpen = true)
+        is CloseDisplayWindowAction -> state.copy(displayWindowOpen = false)
+        is DisplayWindowBlockedAction -> state.copy(displayWindowOpen = false)
         is NewOrderAction       ->
             state.plusOrder(Order(action.orderNumber, action.orderDate))
         is OrderNumberEntryChangeAction ->
             state.copy( orderNumberEntry = action.orderNumber,
                     orderNumberValid = orderNumberValidator(action.orderNumber, state))
-
         else -> state
     }
 }

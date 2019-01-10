@@ -41,6 +41,7 @@ internal interface OrderNumberFormProps : RProps {
     var addOrder: (orderNumber: Int) -> Unit
     var clearDisplay: () -> Unit
     var changeSides: () -> Unit
+    var openDisplayWindow: () -> Unit
     var changeMessage: (String) -> Unit
 }
 
@@ -52,12 +53,6 @@ private val eventHandler: (() -> Unit) -> (Event) -> Unit = { handler ->
 }
 
 internal class OrderNumberForm(props: OrderNumberFormProps) : RComponent<OrderNumberFormProps, RState>(props) {
-    private val onFormSubmit = { event: Event ->
-        val orderNumberEntry = props.orderNumberEntry
-        if (orderNumberEntry == null) props.changeSides()
-        else props.addOrder(orderNumberEntry)
-        event.preventDefault()
-    }
 
     private fun RBuilder.numberInput() {
         styledInput(InputType.number) {
@@ -160,7 +155,12 @@ internal class OrderNumberForm(props: OrderNumberFormProps) : RComponent<OrderNu
                 columns {
                     attrs.classes = setOf("py-2", "columns", props.currentColor.bg)
                     css.height = 100.pct
-                    column(1) { }
+                    column(1) {
+                        styledButton {
+                            attrs.onClickFunction = eventHandler(props.openDisplayWindow)
+                            icon2x("icon-share")
+                        }
+                    }
                     column(3) { numberInput() }
                     column(2, setOf("py-2")) {
                         css.verticalAlign = VerticalAlign.middle
@@ -195,6 +195,7 @@ internal interface DispatchProps: RProps {
     var clearDisplay: () -> Unit
     var changeSides: () -> Unit
     var changeMessage: (String) -> Unit
+    var openDisplayWindow: () -> Unit
 }
 
 private val mapStateToProps: StateProps.(AppState, RProps) -> Unit = {state, _ ->
@@ -210,6 +211,7 @@ private val mapDispatchToProps: DispatchProps.((RAction) -> WrapperAction, RProp
     clearDisplay = { dispatch(ClearStateAction()) }
     changeSides = { dispatch(ChangeSidesAction()) }
     changeMessage = { message -> dispatch(ChangeMessageAction(message)) }
+    openDisplayWindow = { dispatch(OpenDisplayWindowAction()) }
 }
 
 val connectedOrderNumberForm: RClass<RProps> = rConnect<AppState, RAction, WrapperAction, RProps,
