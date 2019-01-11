@@ -40,10 +40,7 @@ interface WrappedCompletedOrdersDisplayProps : RProps {
     var displayOrder: DisplayOrder
 }
 
-interface CompletedOrdersDisplayState : RState {
-    var leftOrders: List<Order>
-    var rightOrders: List<Order>
-}
+interface CompletedOrdersDisplayState : RState
 
 object OrderDisplayStyle : StyleSheet("OrderDisplay") {
     val wrapper by css {
@@ -57,17 +54,13 @@ object OrderDisplayStyle : StyleSheet("OrderDisplay") {
 class CompletedOrdersDisplay : RComponent<CompletedOrdersDisplayProps, CompletedOrdersDisplayState>() {
     private val mainHeight: Int = 80
 
-    override fun componentWillMount() {
-        setState {
-            if (props.displayOrder == DisplayOrder.BR) {
-                leftOrders = props.blueOrders
-                rightOrders = props.redOrders
-            } else {
-                leftOrders = props.redOrders
-                rightOrders = props.blueOrders
-            }
-        }
-    }
+    private val leftOrders
+        get() = if (props.displayOrder == DisplayOrder.BR)
+            props.blueOrders else props.redOrders
+
+    private val rightOrders
+        get() = if (props.displayOrder == DisplayOrder.BR)
+            props.redOrders else props.blueOrders
 
     override fun RBuilder.render() {
         container {
@@ -96,14 +89,14 @@ class CompletedOrdersDisplay : RComponent<CompletedOrdersDisplayProps, Completed
                         height = 100.pct
                         border(16.px, BorderStyle.solid, Color.currentColor)
                     }
-                    renderOrders(state.leftOrders)
+                    renderOrders(leftOrders)
                 }
                 column(6, setOf(props.displayOrder.right.fg)) {
                     css {
                         height = 100.pct
                         border(16.px, BorderStyle.solid, Color.currentColor)
                     }
-                    renderOrders(state.rightOrders)
+                    renderOrders(rightOrders)
                 }
             }
         }

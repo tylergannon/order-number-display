@@ -156,40 +156,26 @@ class OrderNumberForm(props: OrderNumberFormProps) : RComponent<OrderNumberFormP
                             }
                         }
                     }
-                    column(8) {
-                        styledDiv {
-                            numberInput()
-                            styledTextArea {
-                                attrs.value = props.message
-                                attrs.onChangeFunction = { event ->
-                                    event.target.let { it as HTMLTextAreaElement }.value.run { props.changeMessage(this) }
-                                }
-                                css {
-                                    display = Display.inlineBlock
-                                    verticalAlign = VerticalAlign.bottom
-                                    marginLeft = 20.px
-                                }
-                                css.height = 75.px
+                    column(2) { numberInput() }
+                    column(4) {
+                        submitForm()
+                        switchButton()
+                        clearButton()
+                        openNewWindowButton()
+                    }
+                    column(2) {
+                        styledTextArea {
+                            attrs.value = props.message
+                            attrs.onChangeFunction = { event ->
+                                event.target.let { it as HTMLTextAreaElement }.value.run { props.changeMessage(this) }
                             }
+                            css {
+                                display = Display.inlineBlock
+                                verticalAlign = VerticalAlign.bottom
+                                marginLeft = 20.px
+                            }
+                            css.height = 75.px
                         }
-                        styledDiv {
-                            submitForm()
-                            switchButton()
-                            clearButton()
-                            openNewWindowButton()
-                        }
-//                        container {
-//                            columns {
-//                                column(6) {
-//                                    css.paddingTop = 20.px
-//                                }
-//                                column(6) {
-////                                    css.verticalAlign = VerticalAlign.middle
-////                                    css.lineHeight = LineHeight.initial
-//                                    css.paddingTop = 20.px
-//                                }
-//                            }
-//                        }
                     }
                     column(2, setOf("text-dark")) {
                         css.fontWeight = FontWeight.bolder

@@ -36,12 +36,6 @@ interface AppStateJSON {
 
 data class Order(val orderNumber: Int, val completedTime: Double)
 
-fun List<Order>.plusBounded(order: Order, bound: Int = ORDERS_IN_QUEUE) = plus(order).run {
-    if (size > bound) {
-        drop(size - bound)
-    } else this
-}
-
 data class AppState (val redOrders: List<Order> = listOf(),
                      val blueOrders: List<Order> = listOf(),
                      val currentColor: OrderArea = OrderArea.initialState,
@@ -49,6 +43,12 @@ data class AppState (val redOrders: List<Order> = listOf(),
                      val orderNumberValid: Boolean = false,
                      val message: String = "",
                      val displayWindowOpen: Boolean = false) : RState {
+
+    private fun List<Order>.plusBounded(order: Order, bound: Int = ORDERS_IN_QUEUE) = plus(order).run {
+        if (size > bound) {
+            drop(size - bound)
+        } else this
+    }
 
     fun plusOrder(order: Order) : AppState = copy(
             redOrders = if (currentColor == OrderArea.Red) redOrders.plusBounded(order) else redOrders,
@@ -151,7 +151,7 @@ val storeStateMiddleware: AppMiddleware = { store -> { next -> { action ->
     }
 } } }
 
-val resizeWindowMiddleware: AppMiddleware = { store ->
+val resizeWindowMiddleware: AppMiddleware = {
     { next ->
         { action ->
             next(action).apply {
@@ -162,17 +162,17 @@ val resizeWindowMiddleware: AppMiddleware = { store ->
     }
 }
 
-val appStore = createStore(
-        appReducer,
-        loadState(),
-        compose(applyMiddleware(storeStateMiddleware, resizeWindowMiddleware), rEnhancer())
-)
-
-//val appStore = createStore<AppState, RAction, WrapperAction>(
+//val appStore = createStore(
 //        appReducer,
 //        loadState(),
-//        window.asDynamic().__REDUX_DEVTOOLS_EXTENSION_COMPOSE__(kotlinext.js.js { trace = true })(
-//                compose(applyMiddleware(storeStateMiddleware, resizeWindowMiddleware), rEnhancer())
-//        )
+//        compose(applyMiddleware(storeStateMiddleware, resizeWindowMiddleware), rEnhancer())
 //)
-//
+
+val appStore = createStore<AppState, RAction, WrapperAction>(
+        appReducer,
+        loadState(),
+        window.asDynamic().__REDUX_DEVTOOLS_EXTENSION_COMPOSE__(kotlinext.js.js { trace = true })(
+                compose(applyMiddleware(storeStateMiddleware, resizeWindowMiddleware), rEnhancer())
+        )
+)
+
