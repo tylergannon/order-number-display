@@ -162,17 +162,17 @@ val resizeWindowMiddleware: AppMiddleware = {
     }
 }
 
-//val appStore = createStore(
-//        appReducer,
-//        loadState(),
-//        compose(applyMiddleware(storeStateMiddleware, resizeWindowMiddleware), rEnhancer())
-//)
-
-val appStore = createStore<AppState, RAction, WrapperAction>(
+val appStore = createStore(
         appReducer,
         loadState(),
-        window.asDynamic().__REDUX_DEVTOOLS_EXTENSION_COMPOSE__(kotlinext.js.js { trace = true })(
-                compose(applyMiddleware(storeStateMiddleware, resizeWindowMiddleware), rEnhancer())
-        )
+        compose(applyMiddleware(storeStateMiddleware, resizeWindowMiddleware), rEnhancer())
 )
 
+//val appStore = createStore<AppState, RAction, WrapperAction>(
+//        appReducer,
+//        loadState(),
+//        window.asDynamic().__REDUX_DEVTOOLS_EXTENSION_COMPOSE__(kotlinext.js.js { trace = true })(
+//                compose(applyMiddleware(storeStateMiddleware, resizeWindowMiddleware), rEnhancer())
+//        )
+//)
+//
