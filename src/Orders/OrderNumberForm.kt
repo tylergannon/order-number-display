@@ -25,7 +25,7 @@ import styled.*
 import textFit
 import kotlin.js.Date
 
-internal interface OrderNumberFormProps : RProps {
+interface OrderNumberFormProps : RProps {
     var orderNumberEntry: Int?
     var orderNumberValid: Boolean
     var currentColor: OrderArea
@@ -45,7 +45,7 @@ private val eventHandler: (() -> Unit) -> (Event) -> Unit = { handler ->
     }
 }
 
-internal class OrderNumberForm(props: OrderNumberFormProps) : RComponent<OrderNumberFormProps, RState>(props) {
+class OrderNumberForm(props: OrderNumberFormProps) : RComponent<OrderNumberFormProps, RState>(props) {
 
     private fun RBuilder.numberInput() {
         styledInput(InputType.number) {
@@ -208,14 +208,14 @@ internal class OrderNumberForm(props: OrderNumberFormProps) : RComponent<OrderNu
     }
 }
 
-internal interface StateProps: RProps {
+interface StateProps : RProps {
     var orderNumberEntry: Int?
     var orderNumberValid: Boolean
     var currentColor: OrderArea
     var message: String
 }
 
-internal interface DispatchProps: RProps {
+interface DispatchProps : RProps {
     var orderNumberEntryChanged: (orderNumber: Int?) -> Unit
     var addOrder: (orderNumber: Int) -> Unit
     var clearDisplay: () -> Unit
