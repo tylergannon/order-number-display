@@ -36,6 +36,7 @@ interface OrderNumberFormProps : RProps {
     var changeSides: () -> Unit
     var openDisplayWindow: () -> Unit
     var changeMessage: (String) -> Unit
+    var switchDisplayDirection: () -> Unit
 }
 
 private val eventHandler: (() -> Unit) -> (Event) -> Unit = { handler ->
@@ -208,6 +209,7 @@ interface DispatchProps : RProps {
     var changeSides: () -> Unit
     var changeMessage: (String) -> Unit
     var openDisplayWindow: () -> Unit
+    var switchDisplayDirection: () -> Unit
 }
 
 private val mapStateToProps: StateProps.(AppState, RProps) -> Unit = {state, _ ->
@@ -224,6 +226,7 @@ private val mapDispatchToProps: DispatchProps.((RAction) -> WrapperAction, RProp
     changeSides = { dispatch(ChangeSidesAction()) }
     changeMessage = { message -> dispatch(ChangeMessageAction(message)) }
     openDisplayWindow = { dispatch(OpenDisplayWindowAction()) }
+    switchDisplayDirection = { dispatch(SwitchDisplayDirectionAction()) }
 }
 
 val connectedOrderNumberForm: RClass<RProps> = rConnect<AppState, RAction, WrapperAction, RProps,

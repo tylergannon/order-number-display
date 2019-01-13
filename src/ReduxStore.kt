@@ -20,6 +20,14 @@ enum class OrderArea(val fg: String, val bg: String) {
     }
 }
 
+enum class DisplayOrder(val left: OrderArea, val right: OrderArea) {
+
+    RB(OrderArea.Red, OrderArea.Blue),
+    BR(OrderArea.Blue, OrderArea.Red);
+
+    fun next() = if (this == RB) BR else RB
+}
+
 interface OrderJSON {
     var orderNumber: Int
     var completedTime: Double
@@ -32,6 +40,7 @@ interface AppStateJSON {
     var orderNumberEntry: Int?
     var orderNumberValid: Boolean
     var message: String
+    var insideDisplayOrder: String
 }
 
 data class Order(val orderNumber: Int, val completedTime: Double)
@@ -42,7 +51,8 @@ data class AppState (val redOrders: List<Order> = listOf(),
                      val orderNumberEntry: Int? = null,
                      val orderNumberValid: Boolean = false,
                      val message: String = "",
-                     val displayWindowOpen: Boolean = false) : RState {
+                     val displayWindowOpen: Boolean = false,
+                     val insideDisplayOrder: DisplayOrder = DisplayOrder.RB) : RState {
 
     private fun List<Order>.plusBounded(order: Order, bound: Int = ORDERS_IN_QUEUE) = plus(order).run {
         if (size > bound) {
@@ -65,7 +75,8 @@ data class AppState (val redOrders: List<Order> = listOf(),
                 currentColor = OrderArea.valueOf(state.currentColor),
                 orderNumberEntry = state.orderNumberEntry,
                 orderNumberValid = state.orderNumberValid,
-                message = state.message
+                message = state.message,
+                insideDisplayOrder = DisplayOrder.valueOf(state.insideDisplayOrder)
         )
         fun deserialize(json: String) = fromJSON(JSON.parse(json))
     }
@@ -87,9 +98,9 @@ data class AppState (val redOrders: List<Order> = listOf(),
             orderNumberEntry = me.orderNumberEntry
             orderNumberValid = me.orderNumberValid
             message = me.message
+            insideDisplayOrder = me.insideDisplayOrder.name
         }
     }
-
 }
 
 
@@ -105,6 +116,7 @@ class ChangeMessageAction(val message: String) : RAction
 class OpenDisplayWindowAction : RAction
 class DisplayWindowBlockedAction : RAction
 class CloseDisplayWindowAction : RAction
+class SwitchDisplayDirectionAction : RAction
 
 /**----------------------------------------------------------------------------
 END ACTIONS
@@ -129,6 +141,7 @@ val appReducer: Reducer<AppState, RAction> = fun(state: AppState, action: RActio
         is OpenDisplayWindowAction -> state.copy(displayWindowOpen = true)
         is CloseDisplayWindowAction -> state.copy(displayWindowOpen = false)
         is DisplayWindowBlockedAction -> state.copy(displayWindowOpen = false)
+        is SwitchDisplayDirectionAction -> state.copy(insideDisplayOrder = state.insideDisplayOrder.next())
         is NewOrderAction       ->
             state.plusOrder(Order(action.orderNumber, action.orderDate))
         is OrderNumberEntryChangeAction ->

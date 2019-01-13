@@ -17,28 +17,22 @@ import react.redux.rConnect
 import redux.RAction
 import redux.WrapperAction
 import store.AppState
+import store.DisplayOrder
 import store.Order
-import store.OrderArea
 import styled.StyleSheet
 import styled.css
 import styled.styledDiv
 import textFit
-
-enum class DisplayOrder(val left: OrderArea, val right: OrderArea) {
-    RB(OrderArea.Red, OrderArea.Blue),
-    BR(OrderArea.Blue, OrderArea.Red)
-}
 
 interface CompletedOrdersDisplayProps : CompletedOrdersStateProps, WrappedCompletedOrdersDisplayProps
 
 interface CompletedOrdersStateProps : RProps {
     var redOrders: List<Order>
     var blueOrders: List<Order>
-}
-
-interface WrappedCompletedOrdersDisplayProps : RProps {
     var displayOrder: DisplayOrder
 }
+
+interface WrappedCompletedOrdersDisplayProps : RProps
 
 interface CompletedOrdersDisplayState : RState
 
@@ -121,4 +115,5 @@ val connectedCompletedOrdersDisplay: RClass<WrappedCompletedOrdersDisplayProps> 
                 CompletedOrdersStateProps, RProps, CompletedOrdersDisplayProps>({ state, _ ->
             redOrders = state.redOrders
             blueOrders = state.blueOrders
+            displayOrder = state.insideDisplayOrder
         }, {_, _ ->})(CompletedOrdersDisplay::class.js as RClass<CompletedOrdersDisplayProps>)

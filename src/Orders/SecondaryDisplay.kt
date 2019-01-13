@@ -7,10 +7,7 @@ import kotlinx.html.classes
 import react.*
 import redux.RAction
 import redux.WrapperAction
-import store.AppState
-import store.CloseDisplayWindowAction
-import store.DisplayWindowBlockedAction
-import store.Order
+import store.*
 import styled.css
 import styled.styledDiv
 import textFit
@@ -21,6 +18,7 @@ interface SecondaryDisplayStateProps : RProps {
     var blueOrders: List<Order>
     var message: String
     var displayWindowOpen: Boolean
+    var displayOrder: DisplayOrder
 }
 
 interface SecondaryDisplayDispatchProps : RProps {
@@ -47,7 +45,7 @@ class SecondaryDisplay : RComponent<SecondaryDisplayProps, RState>() {
                     child(CompletedOrdersDisplay::class) {
                         attrs.blueOrders = props.blueOrders
                         attrs.redOrders = props.redOrders
-                        attrs.displayOrder = DisplayOrder.RB
+                        attrs.displayOrder = props.displayOrder
                     }
                 }
                 styledDiv {
@@ -73,6 +71,7 @@ val connectedSecondaryDisplay: react.RClass<RProps> =
             blueOrders = state.blueOrders
             message = state.message
             displayWindowOpen = state.displayWindowOpen
+            displayOrder = state.insideDisplayOrder.next()
         }, { dispatch, _ ->
             onUnload = { dispatch(CloseDisplayWindowAction()) }
             onBlock = { dispatch(DisplayWindowBlockedAction()) }

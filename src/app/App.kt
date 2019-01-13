@@ -1,7 +1,6 @@
 package app
 
 import kotlinx.css.pct
-import orders.DisplayOrder
 import orders.connectedCompletedOrdersDisplay
 import orders.connectedOrderNumberForm
 import orders.connectedSecondaryDisplay
@@ -9,6 +8,7 @@ import react.RBuilder
 import react.RComponent
 import react.RProps
 import react.RState
+import store.DisplayOrder
 import store.Order
 import store.OrderArea
 import styled.styledDiv
