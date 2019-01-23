@@ -1,9 +1,6 @@
 package orders
 
-import grid.column
-import grid.columns
-import grid.container
-import grid.icon2x
+import grid.*
 import kotlinx.css.*
 import kotlinx.css.properties.LineHeight
 import kotlinx.html.ButtonType
@@ -12,10 +9,14 @@ import kotlinx.html.classes
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
 import kotlinx.html.js.onSubmitFunction
+import kotlinx.html.tabIndex
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLTextAreaElement
 import org.w3c.dom.events.Event
 import react.*
+import react.dom.a
+import react.dom.li
+import react.dom.ul
 import react.dom.value
 import react.redux.rConnect
 import redux.RAction
@@ -31,6 +32,7 @@ interface OrderNumberFormProps : RProps {
     var currentColor: OrderArea
     var orderNumberEntryChanged: (orderNumber: Int?) -> Unit
     var message: String
+    var displayOrder: DisplayOrder
     var addOrder: (orderNumber: Int) -> Unit
     var clearDisplay: () -> Unit
     var changeSides: () -> Unit
@@ -141,15 +143,41 @@ class OrderNumberForm(props: OrderNumberFormProps) : RComponent<OrderNumberFormP
                 event.preventDefault()
             }
             container {
-                css.height = 100.pct
+                css {
+                    height = 100.pct
+                }
                 columns {
-                    attrs.classes = setOf("py-2", "columns", props.currentColor.bg)
-                    css.height = 100.pct
+                    attrs.classes = setOf("py-2", "columns")
+                    css {
+                        height = 100.pct
+                        backgroundColor = props.currentColor.color
+                        position = Position.relative
+                    }
 
-                    column(2, setOf("text-dark")) {
+                    styledDiv {
+                        attrs.classes = setOf("dropdown")
+                        css {
+                            position = Position.absolute
+                        }
+                        a("#",classes = "btn btn-link dropdown-toggle") {
+                            attrs.tabIndex = "0"
+                            icon("icon-more-vert")
+                        }
+                        ul("menu") {
+                            li("menu-item") { a("#") {
+                                attrs.onClickFunction = eventHandler(props.switchDisplayDirection)
+                                +"Switch Display"
+                            } }
+                        }
+                    }
+
+                    column(2) {
                         css.fontWeight = FontWeight.bolder
-                        if (props.currentColor == OrderArea.Blue) {
-                            css.lineHeight = LineHeight("0.5")
+                        if (props.currentColor === props.displayOrder.left) {
+                            css {
+                                lineHeight = LineHeight("0.5")
+                                color = props.displayOrder.left.arrowColor
+                            }
                             textFit {
                                 attrs.mode = "single"
                                 attrs.max = 200
@@ -178,10 +206,15 @@ class OrderNumberForm(props: OrderNumberFormProps) : RComponent<OrderNumberFormP
                             css.height = 75.px
                         }
                     }
-                    column(2, setOf("text-dark")) {
-                        css.fontWeight = FontWeight.bolder
-                        if (props.currentColor == OrderArea.Red) {
-                            css.lineHeight = LineHeight("0.5")
+                    column(2) {
+                        css {
+                            fontWeight = FontWeight.bolder
+                        }
+                        if (props.currentColor === props.displayOrder.right) {
+                            css {
+                                lineHeight = LineHeight("0.5")
+                                color = props.displayOrder.right.arrowColor
+                            }
                             textFit {
                                 attrs.mode = "single"
                                 attrs.max = 200
@@ -200,6 +233,7 @@ interface StateProps : RProps {
     var orderNumberValid: Boolean
     var currentColor: OrderArea
     var message: String
+    var displayOrder: DisplayOrder
 }
 
 interface DispatchProps : RProps {
@@ -217,6 +251,7 @@ private val mapStateToProps: StateProps.(AppState, RProps) -> Unit = {state, _ -
     orderNumberValid = state.orderNumberValid
     currentColor = state.currentColor
     message = state.message
+    displayOrder = state.insideDisplayOrder
 }
 
 private val mapDispatchToProps: DispatchProps.((RAction) -> WrapperAction, RProps) -> Unit = {dispatch, _ ->

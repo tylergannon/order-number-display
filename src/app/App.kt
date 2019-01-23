@@ -8,7 +8,6 @@ import react.RBuilder
 import react.RComponent
 import react.RProps
 import react.RState
-import store.DisplayOrder
 import store.Order
 import store.OrderArea
 import styled.styledDiv
@@ -25,9 +24,7 @@ class App : RComponent<RProps, InternalAppState>() {
     override fun RBuilder.render() {
         styledDiv {
             css.height = 80.pct
-            connectedCompletedOrdersDisplay {
-                attrs.displayOrder = DisplayOrder.BR
-            }
+            connectedCompletedOrdersDisplay {}
         }
         styledDiv {
             css.height = 20.pct

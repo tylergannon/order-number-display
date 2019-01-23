@@ -26,5 +26,6 @@ interface TextFitProps : RProps {
     var min: Int
     var max: Int
     var mode: String
+    var forceSingleModeWidth: Boolean
     var onReady: () -> Unit
 }

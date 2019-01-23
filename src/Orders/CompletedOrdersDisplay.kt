@@ -61,14 +61,22 @@ class CompletedOrdersDisplay : RComponent<CompletedOrdersDisplayProps, Completed
             css.height = 100.pct
             columns {
                 css.height = (100 - mainHeight).pct
-                column(6, setOf(props.displayOrder.left.bg)) {
+                column(6) {
+                    css {
+                        backgroundColor = props.displayOrder.left.color
+                        color = Color.white
+                    }
                     textFit {
                         attrs.mode = "single"
                         icon("icon-arrow-left")
                         +"Left Side"
                     }
                 }
-                column(6, setOf(props.displayOrder.right.bg)) {
+                column(6) {
+                    css {
+                        backgroundColor = props.displayOrder.right.color
+                        color = Color.white
+                    }
                     textFit {
                         attrs.mode = "single"
                         +"Right Side"
@@ -78,16 +86,18 @@ class CompletedOrdersDisplay : RComponent<CompletedOrdersDisplayProps, Completed
             }
             columns {
                 css.height = mainHeight.pct
-                column(6, setOf(props.displayOrder.left.fg)) {
+                column(6) {
                     css {
                         height = 100.pct
+                        color = props.displayOrder.left.color
                         border(16.px, BorderStyle.solid, Color.currentColor)
                     }
                     renderOrders(leftOrders)
                 }
-                column(6, setOf(props.displayOrder.right.fg)) {
+                column(6) {
                     css {
                         height = 100.pct
+                        color = props.displayOrder.right.color
                         border(16.px, BorderStyle.solid, Color.currentColor)
                     }
                     renderOrders(rightOrders)

@@ -2,6 +2,7 @@ package orders
 
 import external.NewWindow
 import kotlinext.js.js
+import kotlinx.css.Color
 import kotlinx.css.pct
 import kotlinx.html.classes
 import react.*
@@ -49,8 +50,9 @@ class SecondaryDisplay : RComponent<SecondaryDisplayProps, RState>() {
                     }
                 }
                 styledDiv {
-                    attrs.classes = setOf("bg-secondary", "text-primary")
                     css {
+                        backgroundColor = Color.white
+                        color = OrderArea.Blue.color
                         height = 15.pct
                         width = 100.pct
                     }

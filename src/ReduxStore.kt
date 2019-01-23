@@ -2,6 +2,7 @@
 package store
 
 import kotlinext.js.jsObject
+import kotlinx.css.Color
 import org.w3c.dom.events.Event
 import react.RState
 import redux.*
@@ -10,8 +11,9 @@ import kotlin.browser.window
 
 private val ORDERS_IN_QUEUE = 16
 
-enum class OrderArea(val fg: String, val bg: String) {
-    Red("text-error", "bg-error"), Blue("text-primary", "bg-primary");
+enum class OrderArea(val color: Color, val arrowColor: Color) {
+    Red(Color.red, Color.black), Blue(Color.blue, Color.white);
+//    Red(Color("#8d2e42")), Blue(Color("#4f84b0"));
 
     fun next() = if (this == Red) Blue else Red
 
@@ -135,7 +137,7 @@ private fun loadState(state: AppState = AppState.initialValue) =
 
 val appReducer: Reducer<AppState, RAction> = fun(state: AppState, action: RAction): AppState {
     return when(action) {
-        is ClearStateAction     ->  AppState.initialValue
+        is ClearStateAction     ->  AppState.initialValue.copy(displayWindowOpen = state.displayWindowOpen)
         is ChangeSidesAction    ->  state.copy(currentColor = state.currentColor.next(), orderNumberEntry = null)
         is ChangeMessageAction -> state.copy(message = action.message)
         is OpenDisplayWindowAction -> state.copy(displayWindowOpen = true)
